@@ -4,8 +4,10 @@ import numpy as np
 class Game:
     def __init__(self):
         self.board = np.array([0, 0, 0, 0, 0])
-        self.balance = 700
-        self.bet = 5
+        self.balance = 1500
+        self.bet = 40
+        self.level = 1
+        self.coin_value = 0.5
         self.values = np.array([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                                 [4, 2, 0, 0, 0, 0, 0, 0, 0, 0],
                                 [100, 40, 30, 20, 20, 10, 10, 5, 5, 5],
@@ -14,7 +16,7 @@ class Game:
         self.symbols = ['W', 'P', 'D', 'Z', 'M', 'A', 'K', 'Q', 'J', '1']
 
     def gen_board(self):
-        self.board = np.random.randint(0,6,(3,5))
+        self.board = np.random.randint(0,10,(3,5))
 
     def print_board(self):
         new_board = []
@@ -28,7 +30,7 @@ class Game:
     def print_balance(self):
         print(self.balance)
 
-    def check_lines(self, line):
+    def check_line(self, line):
         win = 0
         value = 0
         for element in line:
@@ -44,16 +46,21 @@ class Game:
         if self.values[win][value] > 0:
             print('value', self.symbols[value])
             print('win', self.values[win][value])
+        return self.values[win][value]*self.level*self.coin_value
 
     def spin(self):
+        self.balance -= g.bet*g.level*g.coin_value
         self.gen_board()
         self.print_board()
         for i in range(3):
-            self.check_lines(self.board[i])
+            self.balance += self.check_line(self.board[i])
+        print('Balance:', self.balance)
 
 
 if __name__ == "__main__":
     g = Game()
+    print('Balance:', g.balance)
+    print('Bet:', g.bet*g.level*g.coin_value)
     endgame = ''
     while endgame != 'q':
         g.spin()
